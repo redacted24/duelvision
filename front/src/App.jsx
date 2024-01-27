@@ -21,17 +21,32 @@ const App = () => {
 			const ctx = canvas.getContext('2d');
 
 			// Drawing shapes
+				// ctx.beginPath() Path drawing
+				// fillRect(x, y, width, height) FULL RECTANGLE
+				// strokeRect(x, y, width, height) OUTLINE RECTANGLE (path drawn)
+				// clearRect(x, y, width, height) CLEARS RECTANGLE (transparent, or erase)
+				// fillStyle = "rgb(r g b alpha)"
 			ctx.fillStyle = "rgb(200 0 0)";
-			ctx.fillRect(10, 10, 50, 50);
+			ctx.fillRect(0, 1, 20, 50);
 
 			ctx.fillStyle = "rgb(0 0 200 / 50%)"
 			ctx.fillRect(30, 30, 50, 50)
+
+			// Triangle
+			ctx.beginPath();
+			ctx.moveTo(75, 50); // Move origin point
+			ctx.lineTo(100, 75);
+			ctx.lineTo(100, 25);
+			ctx.fill(); // Closes last point to origin point automatically
 
 		} else {
 			console.log('Canvas not supported')
 		}
 	}
-	window.addEventListener('load', draw())
+	setTimeout(() => {
+		window.addEventListener('load', draw())
+	}, 1)
+
 
 	return (
 		<div>
