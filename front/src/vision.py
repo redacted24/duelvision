@@ -5,28 +5,26 @@ import numpy as np
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-#asdf = "------------------"
-def image(file):
-    with open(file, "rb") as base64_file:
-        arr = np.frombuffer(base64.b64decode(base64_file.read()), np.uint8)
-        frame = cv.flip(cv.imdecode(arr, cv.IMREAD_COLOR), 1)
-        with mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.5) as hands:
-            #print(asdf, frame)
-            image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            image.flags.writeable = False
-            
-            #print(asdf, image)
-            results = hands.process(image)
-            
-            image.flags.writeable = True
-            image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
-            if results.multi_hand_landmarks:
-                for landmark in results.multi_hand_landmarks:
-                    print(landmark)
-                    mp_drawing.draw_landmarks(image, landmark, mp_hands.HAND_CONNECTIONS)
-            
-            cv.imshow('Image', cv.flip(image, 1))
-            cv.waitKey(0)
+def image(b64_string):
+    arr = np.frombuffer(base64.b64decode(b64_string), np.uint8)
+    frame = cv.flip(cv.imdecode(arr, cv.IMREAD_COLOR), 1)
+    with mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.5) as hands:
+        image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+        image.flags.writeable = False
+        
+        results = hands.process(image)
+        
+        image.flags.writeable = True
+        image = cv.cvtColor(image, cv.COLOR_RGB2BGR)
+        all_landmarks = []
+        if results.multi_hand_landmarks:
+            for hand in results.multi_hand_landmarks:
+                mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS)
+                for landmark in hand.landmark:
+                    all_landmarks.append([landmark.x, landmark.y])
+        #cv.imshow('Image', cv.flip(image, 1))
+        #cv.waitKey(0)
+        return(all_landmarks)
 
 def video():
     cam = cv.VideoCapture(0)
