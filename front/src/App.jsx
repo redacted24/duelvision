@@ -1,6 +1,8 @@
-import './index.css'
+import './styles/index.css'
 import Camera from './components/Camera'
-import Login from './components/Login';
+import Login from './components/Login'
+
+import { useState } from 'react'
 
 const App = () => {
   let url = 'ws://192.168.173.38:8001'
@@ -17,9 +19,12 @@ const App = () => {
 
   socket.onclose = event => console.log(`Closed ${event.code}`)
 
+  const [username, setUsername] = useState(null)
+
+  if (!username) return <Login setUsername={setUsername} />
+
 	return (
 		<div>
-      <Login />
       <Camera ready={socket.readyState} sendMessage={sendMessage} />
 		</div>
 	)

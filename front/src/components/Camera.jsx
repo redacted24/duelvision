@@ -13,8 +13,8 @@ const Camera = ({ ready, sendMessage }) => {
 
     const capture = React.useCallback(
         () => {
-            // const imageSrc = webcamRef.current.getScreenshot()
-            // sendMessage(imageSrc)
+            const imageSrc = webcamRef.current.getScreenshot()
+            sendMessage(imageSrc)
         },
         [webcamRef]
     )
