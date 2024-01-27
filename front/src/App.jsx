@@ -28,10 +28,10 @@ const App = () => {
 
 		// Ball object
 		const ball = {
-			x: 50,
-			y: 50,
-			vx: 5,
-			vy: 2,
+			x: 400,
+			y: 400,
+			vx: 0,
+			vy: 10,
 			radius: 25,
 			color: 'blue',
 			draw() {
@@ -47,7 +47,7 @@ const App = () => {
 		const ship = {
 			x: 100,
 			y: 20,
-			width: 500,
+			width: 150,
 			height: 50,
 			leftBorder: 0,
 			rightBorder: 0,
@@ -67,16 +67,17 @@ const App = () => {
 			// ### Ball ###
 			ball.draw()
 
-			// Boundary detection in x
+			// Boundary detection
 			if (ball.x + ball.vx > canvas_width || ball.x + ball.vx < 0) {
 				ball.vx = -ball.vx // Invert ball velocity
 			}
-
-			// Boundary detection in y
 			if (ball.y + ball.vy > canvas_height || ball.y + ball.vy < 0) {
 				ball.vy = -ball.vy // Invert ball velocity
 			}
-
+			if (ball.y + ball.vy < ship.y + ship.height && (ship.x <= ball.x && ball.x <= ship.x + ship.width)) {
+				console.log('Ball and Ship collision detected')
+				ball.vy = -ball.vy
+			}
 			ball.x += ball.vx;
 			ball.y += ball.vy;
 
@@ -84,9 +85,9 @@ const App = () => {
 			ship.draw()
 
 			if (ship.x + ship.vx < 0 || ship.x + ship.width + ship.vx > canvas_width) {
+				console.log('Border collision detected')
 				ship.vx = -ship.vx
 			}
-
 			ship.x += ship.vx
 
 			// Request next frame
