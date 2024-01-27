@@ -1,8 +1,30 @@
-import './index.css'
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import Webcam from 'react-webcam'
+import './styles/index.css'
+import Camera from './components/Camera'
+import Login from './components/Login'
+
+
 
 const App = () => {
+	let url = 'ws://192.168.173.38:8001'
+	let socket = new WebSocket(url);
+
+	const sendMessage = (message) => {
+		if (socket.readyState) socket.send(message)
+	};
+	
+	socket.onmessage = async (event) => {
+		let incomingMessage = event.data;
+		console.log(incomingMessage)
+	};
+	
+	
+	socket.onclose = event => console.log(`Closed ${event.code}`)
+
+	const [username, setUsername] = useState(null)
+	
 	// Debug message
 	console.log('Loaded app')
 
@@ -146,20 +168,25 @@ const App = () => {
 	// }
 
 	// init()
-
-	return (
-		<div>
-			{/* <div id='webcam-container'>
-				<Webcam mirrored={true} imageSmoothing={true} audio={false} videoConstraints={videoConstraints}/>	
-			</div> */}
-			{/* Canvas */}
-			<div> 
-				<canvas id="canvas" width={canvas_width} height={canvas_height}>
-					use a different browser
-				</canvas>
+	if (!username) {
+		return <Login setUsername={setUsername} />
+	} else {
+		return (
+			<div>
+				{/* <div id='webcam-container'>
+					<Webcam mirrored={true} imageSmoothing={true} audio={false} videoConstraints={videoConstraints}/>	
+				</div> */}
+				{/* Canvas */}
+				<div>
+					<div>
+						<Camera ready={socket.readyState} sendMessage={sendMessage}/>
+					</div>
+					<canvas id="canvas" width={canvas_width} height={canvas_height}>
+						use a different browser
+					</canvas>
+				</div>
 			</div>
-		</div>
-	)
-}
-
+		)}
+	}	
+	
 export default App
