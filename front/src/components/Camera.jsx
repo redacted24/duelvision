@@ -8,13 +8,13 @@ const videoConstraints = {
     facingMode: "user"
   };
   
-const Camera = ({ sendMessage }) => {
+const Camera = ({ ready, sendMessage }) => {
     const webcamRef = React.useRef(null)
 
     const capture = React.useCallback(
         () => {
-            const imageSrc = webcamRef.current.getScreenshot();
-            sendMessage(imageSrc)
+            // const imageSrc = webcamRef.current.getScreenshot()
+            // sendMessage(imageSrc)
         },
         [webcamRef]
     )

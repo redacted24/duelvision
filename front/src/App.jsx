@@ -1,13 +1,13 @@
 import './index.css'
-import Camera from './Camera'
+import Camera from './components/Camera'
+import Login from './components/Login';
 
 const App = () => {
   let url = 'ws://192.168.173.38:8001'
   let socket = new WebSocket(url);
 
   const sendMessage = (message) => {
-    socket.send(message);
-    return false;
+    if (socket.readyState) socket.send(message)
   };
 
   socket.onmessage = async (event) => {
@@ -19,9 +19,8 @@ const App = () => {
 
 	return (
 		<div>
-			<div>
-        <Camera sendMessage={sendMessage} />
-			</div>
+      <Login />
+      <Camera ready={socket.readyState} sendMessage={sendMessage} />
 		</div>
 	)
 }
