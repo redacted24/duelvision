@@ -12,64 +12,55 @@ const App = () => {
 		aspectRatio: 0.666666666666666667
 	}
 
+	// Canvas frame
+	const width = 300
+	const height = 300
+
 	// Offset for animations
 	let offset = 0
 
 	// Draw function
-	const draw = () => {
-		console.log("Draw function called")
-		const canvas = document.getElementById("canvas");
-
-		if (canvas.getContext) {
-
-			// Full circle angle in radians
-			const circRad = Math.PI*2
-			const ctx = canvas.getContext('2d');
-
-			const init = () => {
-				window.requestAnimationFrame(draw)
-			}
-
-			// Drawing shapes
-				// ctx.beginPath() Path drawing
-				// fillRect(x, y, width, height) FULL RECTANGLE
-				// strokeRect(x, y, width, height) OUTLINE RECTANGLE (path drawn)
-				// clearRect(x, y, width, height) CLEARS RECTANGLE (transparent, or erase)
-				// fillStyle = "rgb(r g b alpha)"
-				// ctx.stroke() Outline drawing. Must close path beforehand
-				// ctx.closePath()
-				// arc(x, y, radius, startAngle, endAngle, counterclockwise)
-				// arcTo(x1, y1, x2, y2, radius)
-				// ctx.fillStyle()
-				// ctx.strokeStyle()
-				
-			ctx.fillStyle = "rgb(200 0 0)";
-			ctx.fillRect(0, 1, 20, 50);
-
-			ctx.fillStyle = "rgb(0 0 200 / 50%)"
-			ctx.fillRect(30, 30, 50, 50)
-			
-
-
-			// // Circle
-			// ctx.beginPath();
-			// ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
-			// ctx.moveTo(110, 75);
-			// ctx.arc(75, 75, 35, 0, Math.PI, false); // Mouth (clockwise)
-			// ctx.moveTo(65, 65);
-			// ctx.arc(60, 65, 5, 0, Math.PI * 2, true); // Left eye
-			// ctx.moveTo(95, 65);
-			// ctx.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
-			// ctx.stroke();
-
-		} else {
-			console.log('Canvas not supported')
-		}
+		// Drawing shapes
+			// ctx.beginPath() Path drawing
+			// fillRect(x, y, width, height) FULL RECTANGLE
+			// strokeRect(x, y, width, height) OUTLINE RECTANGLE (path drawn)
+			// clearRect(x, y, width, height) CLEARS RECTANGLE (transparent, or erase)
+			// fillStyle = "rgb(r g b alpha)"
+			// ctx.stroke() Outline drawing. Must close path beforehand
+			// ctx.closePath()
+			// arc(x, y, radius, startAngle, endAngle, counterclockwise)
+			// arcTo(x1, y1, x2, y2, radius)
+			// ctx.fillStyle()
+			// ctx.strokeStyle()
+	
+	const init = () => {
+		window.requestAnimationFrame(draw)
 	}
-	setTimeout(() => {
-		window.addEventListener('load', draw())
-	}, 1)
 
+	const draw = () => {
+		console.log('Drawing...')
+		const ctx = document.getElementById('canvas').getContext('2d')
+		ctx.globalCompositeOperation = 'destination-over'
+
+		// Clear
+		ctx.clearRect(0,0, height, width)
+
+		// Save
+		ctx.fillStyle = "#000000"
+		ctx.save()
+
+		// Movement
+		ctx.translate(1, 1)
+		ctx.save()
+	
+		// New frame content
+		ctx.fillRect(0,0,10,10)
+		ctx.restore()
+
+		// window.requestAnimationFrame(draw)
+	}
+
+	init()
 
 	return (
 		<div>
@@ -78,7 +69,7 @@ const App = () => {
 			</div> */}
 			{/* Canvas */}
 			<div> 
-				<canvas id="canvas" width="300" height="300">
+				<canvas id="canvas" width={width} height={height}>
 					use a different browser
 				</canvas>
 			</div>
