@@ -4,3 +4,7 @@
     justify-content: center;
     border: 5px red solid;
 }
+
+#canvas {
+    border: 3px solid black;
+}
