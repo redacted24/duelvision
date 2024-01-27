@@ -10,8 +10,8 @@ const App = () => {
 	const circRad = Math.PI * 2
 
 	// Canvas frame
-	const width = 800
-	const height = 800
+	const canvas_width = 800
+	const canvas_height = 800
 
 	// Some Rules for the Webcam. Entire object is passed as a prop in the Webcam component
 	const videoConstraints = {
@@ -47,8 +47,8 @@ const App = () => {
 		const ship = {
 			x: 100,
 			y: 20,
-			shipWidth: 500,
-			shipHeight: 50,
+			width: 500,
+			height: 50,
 			leftBorder: 0,
 			rightBorder: 0,
 			vx: 5,
@@ -56,14 +56,8 @@ const App = () => {
 			color: 'red',
 			draw() {
 				ctx.beginPath()
-				ctx.fillRect(this.x, this.y, this.shipWidth, this.shipHeight)
+				ctx.fillRect(this.x, this.y, this.width, this.height)
 			}
-		}
-
-		// Set new borders of specified object
-		const set_border = (obj) => {
-			obj.leftBorder = obj.x
-			
 		}
 
 		// Draw a single frame.
@@ -74,12 +68,12 @@ const App = () => {
 			ball.draw()
 
 			// Boundary detection in x
-			if (ball.x + ball.vx > width || ball.x + ball.vx < 0) {
+			if (ball.x + ball.vx > canvas_width || ball.x + ball.vx < 0) {
 				ball.vx = -ball.vx // Invert ball velocity
 			}
 
 			// Boundary detection in y
-			if (ball.y + ball.vy > height || ball.y + ball.vy < 0) {
+			if (ball.y + ball.vy > canvas_height || ball.y + ball.vy < 0) {
 				ball.vy = -ball.vy // Invert ball velocity
 			}
 
@@ -87,10 +81,9 @@ const App = () => {
 			ball.y += ball.vy;
 
 			// ### Ship ###
-			ship.rightBorder = ship.x
 			ship.draw()
 
-			if (ship.x + ship.vx > width || ship.x + ship.vx < 0) {
+			if (ship.x + ship.vx < 0 || ship.x + ship.width + ship.vx > canvas_width) {
 				ship.vx = -ship.vx
 			}
 
@@ -160,7 +153,7 @@ const App = () => {
 			</div> */}
 			{/* Canvas */}
 			<div> 
-				<canvas id="canvas" width={width} height={height}>
+				<canvas id="canvas" width={canvas_width} height={canvas_height}>
 					use a different browser
 				</canvas>
 			</div>
