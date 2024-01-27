@@ -1,0 +1,6 @@
+#webcam-container {
+    display: flex;
+    height: 500px;
+    justify-content: center;
+    border: 5px red solid;
+}
