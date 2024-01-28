@@ -2,6 +2,10 @@
     border: 1px solid red;
 } */
 
+.fix {
+    margin-left: 250px;
+}
+
 #main-container {
     color: white;
     padding-top: 35px;
@@ -49,9 +53,9 @@
 .options-container {
     display: flex;
 
-    width: 100%;
+    width: 150%;
     border: 3px solid red;
-    margin-left: 20%;
+    /* margin-left: 250px; */
     height: 170px;
     margin-bottom: 25px;
     transition: all 0.25s;
@@ -60,6 +64,8 @@
     -webkit-user-drag: none;
 
     font-family: 'retro';
+
+    border: 3px solid red;
 }
 
 .options-container:hover {
@@ -68,6 +74,10 @@
 
 .option-image-container {
     width: 200px;
+    height: 170px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-right: 10px;
 }
 
@@ -81,10 +91,20 @@
     margin-bottom: 10px;
 }
 
-.desc {
+.nodec {
+    text-decoration: none;
+}
+
+.icon {
+    height: 100px;
+    width: 100px;
 
 }
 
-.nodec {
-    text-decoration: none;
+.multi {
+    transform: translate(5px,-10px);
+}
+
+.leaderboard {
+    transform: translate(5px, -10px);
 }

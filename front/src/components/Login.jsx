@@ -12,7 +12,8 @@ const Login = ({ setUsername }) => {
 
     const login = (e) => {
         e.preventDefault()
-        setUsername(tempUser && `Anonymous ${Math.floor(Math.random * 100000)}`)
+        setUsername(tempUser)
+        // setUsername(tempUser && `Anonymous ${Math.floor(Math.random * 100000)}`)
         console.log('Username set, logged in')
         setTempUser('')
     }
@@ -29,7 +30,7 @@ const Login = ({ setUsername }) => {
                     Please enter a username for your journey:
                 </h3>
                 <form id='form' onSubmit={login}>
-                    <input placeholder='USERNAME' id='input' type='text' value={tempUser} onChange={handleChange}></input>
+                    <input maxLength='10' placeholder='USERNAME' id='input' type='text' value={tempUser} onChange={handleChange}></input>
                     <div id='submit-container'>
                         <button id='submit' type='submit'>Join</button>
                     </div>

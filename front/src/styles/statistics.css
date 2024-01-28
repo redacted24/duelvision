@@ -1,0 +1,73 @@
+#pfp-pfp {
+    width: 100%;
+}
+
+#page-title2 {
+    font-family: 'retro';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: var(--font-size-big);
+    text-shadow: 5px 5px 0px #444268;
+
+    color: #BAB8DF;
+}
+
+#pfp-container {
+    width: 20%;
+}
+
+#maine-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 60px 0 60px;
+    font-family: 'retro';
+
+    color: #BAB8DF;
+    text-shadow: #444268;
+
+    background-color: #1E1D2D;
+    padding: 50px;
+    box-shadow: 5px 5px 0 #32304a;
+
+    transition: all 0.25s;
+}
+
+#maine-container:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+#trophy {
+    width: 20%;
+}
+
+#nameInfo {
+    padding-left: 40px;
+    width: 60%;
+}
+
+.userName {
+    font-size: var(--font-size-big);
+}
+.statuses {
+    margin-top: 5px;    
+}
+
+.statistics-icons {
+    height: 50px;
+}
+
+.stat-container {
+    display: flex;
+    margin-top: 25px;
+}
+
+.statName {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+}
