@@ -8,9 +8,11 @@ const Header = ({ username }) => {
         return (
             <div id="navbar">
                 <Link id='home' to='/'>Home</Link>
-                <div id="user">
-                    <div>{username}</div>
-                    <div>img</div>
+                <div id="user-panel">
+                    <div id='username'>{username}</div>
+                    <div id='pfp-container'>
+                        <img id='pfp' src='../src/assets/defaultpfp.png'/>
+                    </div>
                 </div>
             </div>
     )} else {

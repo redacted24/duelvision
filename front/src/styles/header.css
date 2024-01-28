@@ -7,6 +7,21 @@
     }
 }
 
+/* div {
+    border: 3px solid red;
+} */
+
+#pfp {
+    height: 45px;
+}
+
+#pfp-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+
 #navbar {
     background-color: #22242B;
     height: 50px;
@@ -30,12 +45,19 @@
     color: #96a2c5;
 }
 
-#user {
+#username {
+    font-family: 'retro';
+    margin-left: 10px;
+    font-size: var(--font-size-mid)
+}
+
+#user-panel {
     padding: 0;
     margin: 0;
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
     position: absolute;
     color: white;
 
@@ -48,5 +70,11 @@
 
     border: black 2px solid;
 
-    animation: slideIn 1.5s ease-in;    
+    animation: slideIn 1.5s ease-in;
+    
+    transition: all 0.25s;
+}
+
+#user-panel:hover {
+    filter: brightness(1.5)
 }
