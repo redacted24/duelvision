@@ -1,0 +1,90 @@
+/* div {
+    border: 1px solid red;
+} */
+
+#main-container {
+    color: white;
+    padding-top: 35px;
+    overflow-x: hidden;
+}
+
+/* border-top most light, border-left mid light, border-bottom dark */
+
+#multiplayer {
+    background-color: #34222D;
+    border-top: #724b63 3px solid;
+    border-left: #553749 3px solid;
+    border-bottom: #281a23 3px solid;
+    color: #F1BCDB;
+}
+
+#multiplayer:hover {
+    transform: translate(-75px,0)
+}
+
+#statistics {
+    background-color: #1E1D2D;
+    border-top: #48456b 3px solid;
+    border-left: #373552 3px solid;
+    border-bottom: #181824 3px solid;
+    color: #BAB8DF;
+}
+
+#statistics:hover {
+    transform: translate(-75px,0)
+}
+
+#leaderboard {
+    background-color: #1C3E2A;
+    border-top: #34724e 3px solid;
+    border-left: #27563a 3px solid;
+    border-bottom: #152e20 3px solid;
+    color: #88FF99;
+}
+
+#leaderboard:hover {
+    transform: translate(-75px,0)
+}
+
+.options-container {
+    display: flex;
+
+    width: 100%;
+    border: 3px solid red;
+    margin-left: 20%;
+    height: 170px;
+    margin-bottom: 25px;
+    transition: all 0.25s;
+    border-radius: 3px;
+    color: black;
+    -webkit-user-drag: none;
+
+    font-family: 'retro';
+}
+
+.options-container:hover {
+    filter: brightness(1.25);
+}
+
+.option-image-container {
+    width: 200px;
+    margin-right: 10px;
+}
+
+.option-text-container {
+    width: 100%;
+    padding: 20px 0 0 20px;
+}
+
+.opt-title {
+    font-size: var(--font-size-big);
+    margin-bottom: 10px;
+}
+
+.desc {
+
+}
+
+.nodec {
+    text-decoration: none;
+}

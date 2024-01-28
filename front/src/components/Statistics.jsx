@@ -7,4 +7,4 @@ const Statistics = () => {
     )
 }
 
-export default App
+export default Statistics

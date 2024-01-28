@@ -5,8 +5,18 @@
 }
 
 #home {
-    padding: 10px 0 0 10px;
+    position: fixed;
+    margin-top: 13px;
+    margin-left: 10px;
     font-family: "retro";
-    color: #747D99;
     font-size: var(--font-size-mid);
+    color: #747D99;
+
+    text-decoration: none;
+
+    transition: all 0.25s;
+}
+
+#home:hover {
+    color: #96a2c5;
 }
