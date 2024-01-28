@@ -23,7 +23,7 @@ const Login = ({ setUsername }) => {
 
             <div id="login-container">
                 <h2>
-                    Welcome to Star War
+                    Welcome to DuelVision!
                 </h2>
                 <p id='par-1'className='normal-font login-text'>Play a familiar game in a completely different way! Use your hands to control your spaceship and face off against your opponents! </p>
                 <h3>
