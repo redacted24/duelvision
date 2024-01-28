@@ -3,7 +3,6 @@ import Webcam from 'react-webcam'
 import { useEffect } from 'react'
 import '../styles/camera.css'
 
-
 const videoConstraints = {
     width: 1280,
     height: 720,

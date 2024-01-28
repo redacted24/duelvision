@@ -1,10 +1,11 @@
 import Camera from './Camera'
 import Canvas from './Canvas'
 
+
 const GamePage = () => {
     return (
         <div>
-            <Camera/>
+            <Camera sendMessage={sendMessage}/>
             <Canvas/>
         </div>
     )
