@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import '../styles/login.css'
 import Header from './Header'
 
@@ -12,13 +13,13 @@ const Login = ({ setUsername }) => {
     const login = (e) => {
         e.preventDefault()
         setUsername(tempUser && `Anonymous ${Math.floor(Math.random * 100000)}`)
-        console.log('UserSet')
+        console.log('Username set, logged in')
         setTempUser('')
     }
 
     return (
         <div>
-            <Header/>
+
             <div id="login-container">
                 <h2>
                     Welcome to Star War
