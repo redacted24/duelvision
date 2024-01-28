@@ -1,9 +1,12 @@
 import { HandLandmarker, FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
+    const navigate = useNavigate()
+    let raf
     let socket = undefined
     let gestureRecognizer = undefined
     let runningMode = null
@@ -16,40 +19,7 @@ const Canvas = () => {
     let primed_timeout_id = null
     let shot_timeout_id = null
     let balls = []
-    let handLandmarker = undefined
-
-    useEffect(() => {
-        const url = 'ws://192.168.173.38:8001'
-        socket = new WebSocket(url)
-        
-        socket.onmessage = function(event) {
-            let incomingMessage = event.data
-    
-            if (incomingMessage === 'hello') {
-                socket.send('hello')
-            } else {
-                console.log(incomingMessage)
-            }
-        }
-    
-        socket.onclose = event => console.log(`Closed ${event.code}`)
-
-        return () => socket.close()
-    }, [])
-
-    if (socket) {
-        socket.onmessage = function(event) {
-            let incomingMessage = event.data
-    
-            if (incomingMessage === 'hello') {
-                socket.send('hello')
-            } else {
-                console.log(incomingMessage)
-            }
-        }
-    
-        socket.onclose = event => console.log(`Closed ${event.code}`)
-    }
+    let game_end = false
 
     useEffect(() => {
         const init = async () => {
@@ -67,21 +37,11 @@ const Canvas = () => {
     }, [])
   
     useEffect(() => {
+        const url = 'ws://192.168.173.38:8001'
+        socket = new WebSocket(url)
+
 		const video = document.getElementById("webcam")
     	const canvasElement = document.getElementById("output_canvas")
-        
-        const createHandLandmarker = async () => {
-            const vision = await FilesetResolver.forVisionTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-            )
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: {
-                modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-            },
-            numHands: 2
-            })
-        }
-        createHandLandmarker()
   
         let lastVideoTime = -1
         let gestureResults = undefined
@@ -138,17 +98,15 @@ const Canvas = () => {
 
         // Enablecam
         const enableCam = (event) => {
-            if (!handLandmarker) {
+            if (!gestureRecognizer) {
                 console.log("Wait! objectDetector not loaded yet.");
                 return;
             }
     
             if (webcamRunning === true) {
                 webcamRunning = false;
-                enableWebcamButton.innerText = "ENABLE PREDICTIONS";
             } else {
                 webcamRunning = true;
-                enableWebcamButton.innerText = "DISABLE PREDICTIONS";
             }
     
             const constraints = {
@@ -160,34 +118,78 @@ const Canvas = () => {
                 video.addEventListener("loadeddata", predictWebcam);
             });
         }
-        const enableWebcamButton = document.getElementById("webcamButton");
-        enableWebcamButton.addEventListener("click", enableCam);
+
+        socket.onmessage = function(event) {
+            let incomingMessage = event.data
+    
+            if (incomingMessage === 'hello') {
+                socket.send('hello')
+            } else {
+                const message = JSON.parse(incomingMessage)
+                if (message.status_wait === false) {
+                    setTimeout(() => {
+                        enableCam()
+                        raf = window.requestAnimationFrame(draw)
+                    }, 1000);
+                    enableCam()
+                }
+                if (message.x >= 0) {
+                    balls = balls.concat({
+                        x: message.x,
+                        y: 10,
+                        vx: 0,
+                        vy: 10,
+                        radius: 25,
+                        color: 'red',
+                        enemy: true,
+                        draw() {
+                            ctx.beginPath()
+                            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true) // Draws circle
+                            ctx.closePath()
+                            ctx.fillStyle = this.color
+                            ctx.fill()
+                        }
+                    })
+                
+                }
+
+                if (!game_end && message.hit) {
+                    game_end = true
+                    alert('You won!!!')
+                    navigate('/')
+                }
+            console.log(incomingMessage)
+            }
+        }
+    
+        socket.onclose = event => console.log(`Closed ${event.code}`)
 
         // ## ACTUAL DRAWING PART ##
         const canvas = document.getElementById("output_canvas")
         const ctx = canvas.getContext("2d");
-        let raf
 
         // Spaceship object
         const ship = {
-            x: 100,
-            y: 20,
+            x: null,
+            y: null,
             width: 150,
             height: 50,
             leftBorder: 0,
             rightBorder: 0,
             vx: 5,
             vy: 0,
-            color: 'red',
+            color: 'black',
             draw() {
                 ctx.beginPath()
+                ctx.fillStyle = this.color
                 ctx.fillRect(this.x, this.y, this.width, this.height)
-                }
+                ctx.restore()
+            }
         }
 
         // Draw a single frame.
         const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
             if (!shot && primed && currentGesture == 'Open_Palm') {
                 shot = true
                 clearTimeout(shot_timeout_id)
@@ -198,7 +200,7 @@ const Canvas = () => {
                     x: ship_x * canvas.width,
                     y: ship_y * canvas.height - 50,
                     vx: 0,
-                    vy: -30,
+                    vy: -20,
                     radius: 25,
                     color: 'blue',
                     draw() {
@@ -215,12 +217,29 @@ const Canvas = () => {
                 ball.draw()
                 ball.x += ball.vx
                 ball.y += ball.vy
+                if (ball.y < 0) {
+                    const message = {x: ball.x}
+                    socket.send(JSON.stringify(message))
+                }
+
+                if (ball.enemy) {
+                    console.log('enemy detected')
+                    if (!game_end && ball.x >= ship.x && ball.x <= ship.x + 150 && ball.y >= ship.y && ball.y <= ship.y + 50) {
+                        game_end = true
+                        socket.send(JSON.stringify({hit: true}))
+                        alert('You lost! :(')
+                        navigate('/')
+                    }
+                }
+                ctx.restore()
             })
             
-            balls = balls.filter(ball => ball.y >= 0)
+            balls = balls.filter(ball => ball.y >= 0 && ball.y <= canvas.height)
 
 
             if (ship.x) ship.draw()
+
+            ctx.restore()
 
             prev_x = ship.x
             prev_y = ship.y
@@ -234,22 +253,15 @@ const Canvas = () => {
 		
 			// Activate drawing on mouse over
 			canvas.addEventListener('mouseover', (e) => {
-				raf = window.requestAnimationFrame(draw);
+				raf = window.requestAnimationFrame(draw)
             })
 
-			canvas.addEventListener('mouseout', (e) => {
-				window.cancelAnimationFrame(raf);
-			})
+            return () => socket.close()
     }, [])
 
     return (
         <div>
-            <button onClick={() => {video = null}}>hi</button>
             <div id="liveView" className="videoView">
-                <button id="webcamButton" className="mdc-button mdc-button--raised">
-                    <span className="mdc-button__ripple"></span>
-                    <span className="mdc-button__label">ENABLE WEBCAM</span>
-                </button>
                 <div id="webcam-container">
                     <video id="webcam" autoPlay playsInline></video>
                     <canvas className="output_canvas" id="output_canvas"></canvas>
