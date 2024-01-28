@@ -1,10 +1,13 @@
 #webcam-container {
-    display: flex;
-    height: 500px;
-    justify-content: center;
-    border: 5px red solid;
+    position: relative
 }
 
-#canvas {
-    border: 3px solid black;
-}   
+#webcam {
+    position: absolute
+}
+
+#output_canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
