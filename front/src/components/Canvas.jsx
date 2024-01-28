@@ -1,12 +1,11 @@
-import { FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
+import { HandLandmarker, FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
-import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
     let gestureRecognizer = undefined
-    let runningMode = null
+    let runningMode = "IMAGE"
     let webcamRunning = false
     let [prev_x, prev_y] = [null, null]
     let [ship_x, ship_y] = [null, null]
@@ -16,6 +15,215 @@ const Canvas = () => {
     let primed_timeout_id = null
     let shot_timeout_id = null
     let ball = null
+    let handLandmarker = undefined
+  
+    useEffect(() => {
+			const video = document.getElementById("webcam");
+    	const canvasElement = document.getElementById("output_canvas")
+      const canvasCtx = canvasElement.getContext("2d");
+      const createHandLandmarker = async () => {
+        const vision = await FilesetResolver.forVisionTasks(
+          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+        )
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+          },
+          numHands: 2
+        })
+      }
+      createHandLandmarker()
+  
+      let lastVideoTime = -1;
+      let gestureResults = undefined;
+      console.log(video);
+  
+			//   async function predictWebcam() {
+			//       canvasElement.style.width = video.videoWidth;;
+			//       canvasElement.style.height = video.videoHeight;
+			//       canvasElement.width = video.videoWidth;
+			//       canvasElement.height = video.videoHeight;
+						
+			//       if (runningMode === "IMAGE") {
+			//           runningMode = "VIDEO";
+			//           await handLandmarker.setOptions({ runningMode: "VIDEO" });
+			//         }
+					
+			//         let startTimeMs = performance.now();
+			//         if (lastVideoTime !== video.currentTime) {
+			//           lastVideoTime = video.currentTime;
+			//           results = handLandmarker.detectForVideo(video, startTimeMs);
+			//         }
+					
+			//         canvasCtx.save();
+			//         canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+				
+			//         if (results.landmarks) {
+			//           for (const landmarks of results.landmarks) {
+			//             console.log(landmarks)
+			//           }
+			//         }
+							
+			//         canvasCtx.restore();
+					
+			//         // Call this function again to keep predicting when the browser is ready.
+			//         if (webcamRunning === true) {
+			//           window.requestAnimationFrame(predictWebcam);
+			//         }
+			//       }
+
+			// PredictWebcam
+			async function predictWebcam() {
+				canvasElement.style.width = video.videoWidth
+				canvasElement.style.height = video.videoHeight
+				canvasElement.width = video.videoWidth
+				canvasElement.height = video.videoHeight
+
+				if (runningMode === null) {
+						runningMode = "VIDEO";
+						await gestureRecognizer.setOptions({ runningMode: "VIDEO "})
+				}
+
+				let startTimeMs = performance.now();
+				if (lastVideoTime !== video.currentTime) {
+						lastVideoTime = video.currentTime;
+						gestureResults = gestureRecognizer.recognizeForVideo(video, startTimeMs)
+				}
+
+				if (gestureResults.landmarks) {
+						for (const landmarks of gestureResults.landmarks) {
+								let [sum_x, sum_y] = [0, 0]
+								landmarks.forEach((landmark) => {
+										const x = landmark.x
+										const y = landmark.y
+										sum_x += x
+										sum_y += y
+								})
+
+								ship_x = sum_x / landmarks.length
+								ship_y = sum_y / landmarks.length
+						}
+						currentGesture = gestureResults.gestures[0][0].categoryName
+						
+						if (currentGesture == 'Closed_Fist') {
+								primed = true
+								clearTimeout(primed_timeout_id)
+								primed_timeout_id = setTimeout(() => {
+										primed = false
+								}, 300)
+						}
+
+				} else {
+						[ship_x, ship_y] = [null, null]
+				}
+		
+				if (webcamRunning === true) {
+						window.requestAnimationFrame(predictWebcam);
+				}
+			}
+
+			// Enablecam
+			const enableCam = (event) => {
+					if (!handLandmarker) {
+						console.log("Wait! objectDetector not loaded yet.");
+						return;
+					}
+			
+					if (webcamRunning === true) {
+						webcamRunning = false;
+						enableWebcamButton.innerText = "ENABLE PREDICTIONS";
+					} else {
+						webcamRunning = true;
+						enableWebcamButton.innerText = "DISABLE PREDICTIONS";
+					}
+			
+					const constraints = {
+						video: true
+					};
+			
+					navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+						video.srcObject = stream;
+						video.addEventListener("loadeddata", predictWebcam);
+					});
+			}
+			const enableWebcamButton = document.getElementById("webcamButton");
+			enableWebcamButton.addEventListener("click", enableCam);
+
+			// ## ACTUAL DRAWING PART ##
+			const canvas = document.getElementById("output_canvas")
+			const ctx = canvas.getContext("2d");
+			let raf
+
+			// Spaceship object
+			const ship = {
+			x: 100,
+			y: 20,
+			width: 150,
+			height: 50,
+			leftBorder: 0,
+			rightBorder: 0,
+			vx: 5,
+			vy: 0,
+			color: 'red',
+			draw() {
+				ctx.beginPath()
+				ctx.fillRect(this.x, this.y, this.width, this.height)
+				}
+			}
+
+			// Draw a single frame.
+			const draw = () => {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (!shot && primed && currentGesture == 'Open_Palm') {
+						shot = true
+						clearTimeout(shot_timeout_id)
+						shot_timeout_id = setTimeout(() => {
+								shot = false
+						}, 500)
+						ball = {
+								x: ship_x * canvas.width,
+								y: ship_y * canvas.height - 50,
+								vx: 0,
+								vy: -30,
+								radius: 25,
+								color: 'blue',
+								draw() {
+										ctx.beginPath()
+										ctx.arc(this.x, this.y, this.radius, 0, circRad, true) // Draws circle
+										ctx.closePath()
+										ctx.fillStyle = this.color
+										ctx.fill()
+								}
+						}
+				}
+
+				if (ball) {
+						ball.draw()
+						ball.x += ball.vx
+						ball.y += ball.vy
+				}
+
+				if (ship.x) ship.draw()
+
+				prev_x = ship.x
+				prev_y = ship.y
+
+				ship.x = ship_x * canvas.width - 80
+				ship.y = ship_y * canvas.height
+
+				// Request next frame
+				raf = window.requestAnimationFrame(draw);
+			}
+		
+			// Activate drawing on mouse over
+			canvas.addEventListener('mouseover', (e) => {
+				raf = window.requestAnimationFrame(draw);
+				});
+
+			canvas.addEventListener('mouseout', (e) => {
+				window.cancelAnimationFrame(raf);
+			});
+    }, [])
 
     useEffect(() => {
         const init = async () => {
@@ -31,175 +239,21 @@ const Canvas = () => {
         }
         init()
     }, [])
-    
-    const video = document.getElementById("webcam");
-    
-    const canvasElement = document.getElementById("output_canvas")
-    
-    const enableCam = (event) => {
-        if (!gestureRecognizer) {
-            console.log("Wait! objectDetector not loaded yet.")
-            return
-        }
-        
-        if (webcamRunning === true) {
-            webcamRunning = false;
-            enableWebcamButton.innerText = "ENABLE PREDICTIONS"
-        } else {
-            webcamRunning = true;
-            enableWebcamButton.innerText = "DISABLE PREDICTIONS"
-        }
-    
-        const constraints = {
-            video: true
-        }
-    
-        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-            video.srcObject = stream;
-            video.addEventListener("loadeddata", predictWebcam);
-        })
-    }
-    
-    const enableWebcamButton = document.getElementById("webcamButton");
-    enableWebcamButton.addEventListener("click", enableCam);
-    
-    
-    let lastVideoTime = -1
-    let gestureResults = undefined
-    
-    console.log(video);
-    async function predictWebcam() {
-        canvasElement.style.width = video.videoWidth
-        canvasElement.style.height = video.videoHeight
-        canvasElement.width = video.videoWidth
-        canvasElement.height = video.videoHeight
-
-        if (runningMode === null) {
-            runningMode = "VIDEO";
-            await gestureRecognizer.setOptions({ runningMode: "VIDEO "})
-        }
-
-        let startTimeMs = performance.now();
-        if (lastVideoTime !== video.currentTime) {
-            lastVideoTime = video.currentTime;
-            gestureResults = gestureRecognizer.recognizeForVideo(video, startTimeMs)
-        }
-
-        if (gestureResults.landmarks) {
-            for (const landmarks of gestureResults.landmarks) {
-                let [sum_x, sum_y] = [0, 0]
-                landmarks.forEach((landmark) => {
-                    const x = landmark.x
-                    const y = landmark.y
-                    sum_x += x
-                    sum_y += y
-                })
-
-                ship_x = sum_x / landmarks.length
-                ship_y = sum_y / landmarks.length
-            }
-            currentGesture = gestureResults.gestures[0][0].categoryName
-            
-            if (currentGesture == 'Closed_Fist') {
-                primed = true
-                clearTimeout(primed_timeout_id)
-                primed_timeout_id = setTimeout(() => {
-                    primed = false
-                }, 300)
-            }
-
-        } else {
-            [ship_x, ship_y] = [null, null]
-        }
-    
-        if (webcamRunning === true) {
-            window.requestAnimationFrame(predictWebcam);
-        }
-    }
-
-    const circRad = Math.PI * 2
-
-	useEffect(() => {
-        const canvas = document.getElementById("output_canvas")
-        const ctx = canvas.getContext("2d");
-		let raf
-
-		// Spaceship object
-		const ship = {
-			x: 100,
-			y: 20,
-			width: 150,
-			height: 50,
-			leftBorder: 0,
-			rightBorder: 0,
-			vx: 5,
-			vy: 0,
-			color: 'red',
-			draw() {
-				ctx.beginPath()
-				ctx.fillRect(this.x, this.y, this.width, this.height)
-			}
-		}
-
-		// Draw a single frame.
-		const draw = () => {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (!shot && primed && currentGesture == 'Open_Palm') {
-                shot = true
-                clearTimeout(shot_timeout_id)
-                shot_timeout_id = setTimeout(() => {
-                    shot = false
-                }, 500)
-                ball = {
-                    x: ship_x * canvas.width,
-                    y: ship_y * canvas.height - 50,
-                    vx: 0,
-                    vy: -30,
-                    radius: 25,
-                    color: 'blue',
-                    draw() {
-                        ctx.beginPath()
-                        ctx.arc(this.x, this.y, this.radius, 0, circRad, true) // Draws circle
-                        ctx.closePath()
-                        ctx.fillStyle = this.color
-                        ctx.fill()
-                    }
-                }
-            }
-
-            if (ball) {
-                ball.draw()
-                ball.x += ball.vx
-                ball.y += ball.vy
-            }
-
-            if (ship.x) ship.draw()
-
-            prev_x = ship.x
-            prev_y = ship.y
-
-			ship.x = ship_x * canvas.width - 80
-            ship.y = ship_y * canvas.height
-
-			// Request next frame
-			raf = window.requestAnimationFrame(draw);
-		}
-		
-		// Activate drawing
-		canvas.addEventListener('mouseover', (e) => {
-			raf = window.requestAnimationFrame(draw);
-		  });
-
-		canvas.addEventListener('mouseout', (e) => {
-			window.cancelAnimationFrame(raf);
-		});
-	},[])
 
     return (
-        <>
+        <div>
             <button onClick={() => {video = null}}>hi</button>
-        </>
+            <div id="liveView" className="videoView">
+                <button id="webcamButton" className="mdc-button mdc-button--raised">
+                    <span className="mdc-button__ripple"></span>
+                    <span className="mdc-button__label">ENABLE WEBCAM</span>
+                </button>
+                <div id="webcam-container">
+                    <video id="webcam" autoPlay playsInline></video>
+                    <canvas className="output_canvas" id="output_canvas"></canvas>
+                </div>
+            </div>
+        </div>
     )
 }
 
