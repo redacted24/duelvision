@@ -8,6 +8,7 @@ import Canvas from './components/Canvas'
 import Leaderboard from './components/Leaderboard'
 import GamePage from './components/GamePage'
 import Lobby from './components/Lobby'
+import Statistics from './components/Statistics'
 import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 const App = () => {
@@ -102,11 +103,12 @@ const App = () => {
   
 	return (
 	<Router>
-		<Header/>
+		<Header />
 		<Routes>
 			<Route path = "/" element = {(!username) ? (<Login setUsername={setUsername}/>) : (<Lobby/>)}/>
 			<Route path = "/gamepage" element = {<GamePage/>}/>
 			<Route path = "/leaderboard" element = {<Leaderboard />}/>
+			<Route path = "/statistics" element = {<Statistics />}/>
 		</Routes>
 	</Router>
 
