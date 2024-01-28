@@ -29,14 +29,24 @@ const Camera = ({ sendMessage }) => {
 
     return (
         <div id='camera-container'>
-            <Webcam
+            {/* <Webcam
                 audio={false}
                 height={720}
                 ref={webcamRef}
                 screenshotFormat='image/jpeg'
                 width={1280}
                 videoConstraints={videoConstraints}
-            />
+            /> */}
+            <div id="liveView" className="videoView">
+            <button id="webcamButton" className="mdc-button mdc-button--raised">
+                <span className="mdc-button__ripple"></span>
+                <span className="mdc-button__label">ENABLE WEBCAM</span>
+            </button>
+            <div id="webcam-container">
+                <video id="webcam" autoPlay playsInline></video>
+                <canvas className="output_canvas" id="output_canvas"></canvas>
+            </div>
+            </div>
         </div>
     )
 }

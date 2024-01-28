@@ -86,11 +86,13 @@ const App = () => {
   
 	  canvasCtx.save();
 	  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
 	  if (results.landmarks) {
 		for (const landmarks of results.landmarks) {
 		  console.log(landmarks)
 		}
 	  }
+	  
 	  canvasCtx.restore();
   
 	  // Call this function again to keep predicting when the browser is ready.
