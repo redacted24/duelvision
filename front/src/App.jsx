@@ -1,8 +1,14 @@
-import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
-import { useEffect } from 'react'
-
+import { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import Header from './components/Header'
 import './styles/index.css'
-
+import Camera from './components/Camera'
+import Login from './components/Login'
+import Canvas from './components/Canvas'
+import Leaderboard from './components/Leaderboard'
+import GamePage from './components/GamePage'
+import Lobby from './components/Lobby'
+import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 const App = () => {
   let handLandmarker = undefined
@@ -66,39 +72,45 @@ const App = () => {
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
     
+	const [username, setUsername] = useState(null)
+	console.log(`Username: ${username}`)
 
     if (runningMode === "IMAGE") {
-      runningMode = "VIDEO";
-      await handLandmarker.setOptions({ runningMode: "VIDEO" });
-    }
+		runningMode = "VIDEO";
+		await handLandmarker.setOptions({ runningMode: "VIDEO" });
+	  }
+  
+	  let startTimeMs = performance.now();
+	  if (lastVideoTime !== video.currentTime) {
+		lastVideoTime = video.currentTime;
+		results = handLandmarker.detectForVideo(video, startTimeMs);
+	  }
+  
+	  canvasCtx.save();
+	  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+	  if (results.landmarks) {
+		for (const landmarks of results.landmarks) {
+		  console.log(landmarks)
+		}
+	  }
+	  canvasCtx.restore();
+  
+	  // Call this function again to keep predicting when the browser is ready.
+	  if (webcamRunning === true) {
+		window.requestAnimationFrame(predictWebcam);
+	  }
+	}
+  
+	return (
+	<Router>
+		<Header/>
+		<Routes>
+			<Route path = "/" element = {(!username) ? (<Login setUsername={setUsername}/>) : (<Lobby/>)}/>
+			<Route path = "/gamepage" element = {<GamePage/>}/>
+			<Route path = "/leaderboard" element = {<Leaderboard />}/>
+		</Routes>
+	</Router>
 
-    let startTimeMs = performance.now();
-    if (lastVideoTime !== video.currentTime) {
-      lastVideoTime = video.currentTime;
-      results = handLandmarker.detectForVideo(video, startTimeMs);
-    }
-
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    if (results.landmarks) {
-      for (const landmarks of results.landmarks) {
-        console.log(landmarks)
-      }
-    }
-    canvasCtx.restore();
-
-    // Call this function again to keep predicting when the browser is ready.
-    if (webcamRunning === true) {
-      window.requestAnimationFrame(predictWebcam);
-    }
-  }
-
-		return (
-      <>
-        <p>hi</p>
-      </>
-
-		)
-	}	
+	)}	
 	
 export default App
