@@ -1,5 +1,6 @@
 import { FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
+import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 import '../styles/canvasNew.css'
 
