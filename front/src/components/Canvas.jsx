@@ -105,10 +105,8 @@ const Canvas = () => {
     
             if (webcamRunning === true) {
                 webcamRunning = false;
-                enableWebcamButton.innerText = "ENABLE PREDICTIONS";
             } else {
                 webcamRunning = true;
-                enableWebcamButton.innerText = "DISABLE PREDICTIONS";
             }
     
             const constraints = {
@@ -156,6 +154,7 @@ const Canvas = () => {
                 }
 
                 if (!game_end && message.hit) {
+                    game_end = true
                     alert('You won!!!')
                     navigate('/')
                 }
@@ -164,9 +163,6 @@ const Canvas = () => {
         }
     
         socket.onclose = event => console.log(`Closed ${event.code}`)
-
-        const enableWebcamButton = document.getElementById("webcamButton")
-        enableWebcamButton.addEventListener("click", enableCam);
 
         // ## ACTUAL DRAWING PART ##
         const canvas = document.getElementById("output_canvas")
@@ -229,6 +225,7 @@ const Canvas = () => {
                 if (ball.enemy) {
                     console.log('enemy detected')
                     if (!game_end && ball.x >= ship.x && ball.x <= ship.x + 150 && ball.y >= ship.y && ball.y <= ship.y + 50) {
+                        game_end = true
                         socket.send(JSON.stringify({hit: true}))
                         alert('You lost! :(')
                         navigate('/')
@@ -264,12 +261,7 @@ const Canvas = () => {
 
     return (
         <div>
-            <button onClick={() => {video = null}}>hi</button>
             <div id="liveView" className="videoView">
-                <button id="webcamButton" className="mdc-button mdc-button--raised">
-                    <span className="mdc-button__ripple"></span>
-                    <span className="mdc-button__label">ENABLE WEBCAM</span>
-                </button>
                 <div id="webcam-container">
                     <video id="webcam" autoPlay playsInline></video>
                     <canvas className="output_canvas" id="output_canvas"></canvas>
