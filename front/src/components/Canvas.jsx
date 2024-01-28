@@ -1,27 +1,34 @@
-import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
+import { FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
 
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
-    let handLandmarker = undefined
+    let gestureRecognizer = undefined
     let runningMode = null
     let webcamRunning = false
+    let [prev_x, prev_y] = [null, null]
     let [ship_x, ship_y] = [null, null]
+    let currentGesture = null
+    let primed = false
+    let shot = false
+    let primed_timeout_id = null
+    let shot_timeout_id = null
+    let ball = null
 
     useEffect(() => {
-        const createHandLandmarker = async () => {
+        const init = async () => {
             const vision = await FilesetResolver.forVisionTasks(
                 "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
             )
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
                 baseOptions: {
-                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task`,
                 },
-            numHands: 1
-          })
+                numHands: 1
+            })
         }
-        createHandLandmarker()
+        init()
     }, [])
     
     const video = document.getElementById("webcam");
@@ -29,7 +36,7 @@ const Canvas = () => {
     const canvasElement = document.getElementById("output_canvas")
     
     const enableCam = (event) => {
-        if (!handLandmarker) {
+        if (!gestureRecognizer) {
             console.log("Wait! objectDetector not loaded yet.")
             return
         }
@@ -56,8 +63,9 @@ const Canvas = () => {
     enableWebcamButton.addEventListener("click", enableCam);
     
     
-    let lastVideoTime = -1;
-    let results = undefined;
+    let lastVideoTime = -1
+    let gestureResults = undefined
+    
     console.log(video);
     async function predictWebcam() {
         canvasElement.style.width = video.videoWidth
@@ -67,17 +75,17 @@ const Canvas = () => {
 
         if (runningMode === null) {
             runningMode = "VIDEO";
-            await handLandmarker.setOptions({ runningMode: "VIDEO" });
+            await gestureRecognizer.setOptions({ runningMode: "VIDEO "})
         }
 
         let startTimeMs = performance.now();
         if (lastVideoTime !== video.currentTime) {
             lastVideoTime = video.currentTime;
-            results = handLandmarker.detectForVideo(video, startTimeMs);
+            gestureResults = gestureRecognizer.recognizeForVideo(video, startTimeMs)
         }
 
-        if (results.landmarks) {
-            for (const landmarks of results.landmarks) {
+        if (gestureResults.landmarks) {
+            for (const landmarks of gestureResults.landmarks) {
                 let [sum_x, sum_y] = [0, 0]
                 landmarks.forEach((landmark) => {
                     const x = landmark.x
@@ -89,6 +97,16 @@ const Canvas = () => {
                 ship_x = sum_x / landmarks.length
                 ship_y = sum_y / landmarks.length
             }
+            currentGesture = gestureResults.gestures[0][0].categoryName
+            
+            if (currentGesture == 'Closed_Fist') {
+                primed = true
+                clearTimeout(primed_timeout_id)
+                primed_timeout_id = setTimeout(() => {
+                    primed = false
+                }, 300)
+            }
+
         } else {
             [ship_x, ship_y] = [null, null]
         }
@@ -104,23 +122,6 @@ const Canvas = () => {
         const canvas = document.getElementById("output_canvas")
         const ctx = canvas.getContext("2d");
 		let raf
-
-		// Ball object
-		const ball = {
-			x: 400,
-			y: 400,
-			vx: 0,
-			vy: 10,
-			radius: 25,
-			color: 'blue',
-			draw() {
-				ctx.beginPath()
-				ctx.arc(this.x, this.y, this.radius, 0, circRad, true) // Draws circle
-				ctx.closePath()
-				ctx.fillStyle = this.color
-				ctx.fill()
-			}
-		}
 
 		// Spaceship object
 		const ship = {
@@ -143,7 +144,39 @@ const Canvas = () => {
 		const draw = () => {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            if (!shot && primed && currentGesture == 'Open_Palm') {
+                shot = true
+                clearTimeout(shot_timeout_id)
+                shot_timeout_id = setTimeout(() => {
+                    shot = false
+                }, 500)
+                ball = {
+                    x: ship_x * canvas.width,
+                    y: ship_y * canvas.height - 50,
+                    vx: 0,
+                    vy: -30,
+                    radius: 25,
+                    color: 'blue',
+                    draw() {
+                        ctx.beginPath()
+                        ctx.arc(this.x, this.y, this.radius, 0, circRad, true) // Draws circle
+                        ctx.closePath()
+                        ctx.fillStyle = this.color
+                        ctx.fill()
+                    }
+                }
+            }
+
+            if (ball) {
+                ball.draw()
+                ball.x += ball.vx
+                ball.y += ball.vy
+            }
+
             if (ship.x) ship.draw()
+
+            prev_x = ship.x
+            prev_y = ship.y
 
 			ship.x = ship_x * canvas.width - 80
             ship.y = ship_y * canvas.height
