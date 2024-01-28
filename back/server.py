@@ -102,6 +102,9 @@ async def handler(websocket):
                 except Exception as e:
                     clients.pop(client_idx - 1)
                     
+                    clients.remove(websocket)
+                    await websocket.close()
+                    return 1
                     
                 #clients.remove(websocket)
                 #for client in clients:
@@ -109,7 +112,7 @@ async def handler(websocket):
                 #clients.remove(websocket)
             clients.remove(websocket)
             await websocket.close()
-            break
+            return 1
 
 '''
         except websockets.exceptions.ConnectionClosed as e:
@@ -137,7 +140,7 @@ async def handler(websocket):
 
 
 async def main():
-    async with websockets.serve(handler, "", 8001):
+    async with websockets.serve(handler, "", 80):
         await asyncio.Future()  # run forever
 
 
