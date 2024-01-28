@@ -1,13 +1,108 @@
+import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
 
+import '../styles/canvasNew.css'
+
 const Canvas = () => {
+    let handLandmarker = undefined
+    let runningMode = null
+    let webcamRunning = false
+    let [ship_x, ship_y] = [null, null]
+
+    useEffect(() => {
+        const createHandLandmarker = async () => {
+            const vision = await FilesetResolver.forVisionTasks(
+                "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+            )
+            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                baseOptions: {
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                },
+            numHands: 1
+          })
+        }
+        createHandLandmarker()
+    }, [])
+    
+    const video = document.getElementById("webcam");
+    
+    const canvasElement = document.getElementById("output_canvas")
+    
+    const enableCam = (event) => {
+        if (!handLandmarker) {
+            console.log("Wait! objectDetector not loaded yet.")
+            return
+        }
+        
+        if (webcamRunning === true) {
+            webcamRunning = false;
+            enableWebcamButton.innerText = "ENABLE PREDICTIONS"
+        } else {
+            webcamRunning = true;
+            enableWebcamButton.innerText = "DISABLE PREDICTIONS"
+        }
+    
+        const constraints = {
+            video: true
+        }
+    
+        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+            video.srcObject = stream;
+            video.addEventListener("loadeddata", predictWebcam);
+        })
+    }
+    
+    const enableWebcamButton = document.getElementById("webcamButton");
+    enableWebcamButton.addEventListener("click", enableCam);
+    
+    
+    let lastVideoTime = -1;
+    let results = undefined;
+    console.log(video);
+    async function predictWebcam() {
+        canvasElement.style.width = video.videoWidth
+        canvasElement.style.height = video.videoHeight
+        canvasElement.width = video.videoWidth
+        canvasElement.height = video.videoHeight
+
+        if (runningMode === null) {
+            runningMode = "VIDEO";
+            await handLandmarker.setOptions({ runningMode: "VIDEO" });
+        }
+
+        let startTimeMs = performance.now();
+        if (lastVideoTime !== video.currentTime) {
+            lastVideoTime = video.currentTime;
+            results = handLandmarker.detectForVideo(video, startTimeMs);
+        }
+
+        if (results.landmarks) {
+            for (const landmarks of results.landmarks) {
+                let [sum_x, sum_y] = [0, 0]
+                landmarks.forEach((landmark) => {
+                    const x = landmark.x
+                    const y = landmark.y
+                    sum_x += x
+                    sum_y += y
+                })
+
+                ship_x = sum_x / landmarks.length
+                ship_y = sum_y / landmarks.length
+            }
+        } else {
+            [ship_x, ship_y] = [null, null]
+        }
+    
+        if (webcamRunning === true) {
+            window.requestAnimationFrame(predictWebcam);
+        }
+    }
+
     const circRad = Math.PI * 2
-	const canvas_width = 800
-	const canvas_height = 800
 
 	useEffect(() => {
-		const canvas = document.getElementById('canvas')
-		const ctx = canvas.getContext('2d')
+        const canvas = document.getElementById("output_canvas")
+        const ctx = canvas.getContext("2d");
 		let raf
 
 		// Ball object
@@ -48,31 +143,10 @@ const Canvas = () => {
 		const draw = () => {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			// ### Ball ###
-			ball.draw()
+            if (ship.x) ship.draw()
 
-			// Boundary detection
-			if (ball.x + ball.vx > canvas_width || ball.x + ball.vx < 0) {
-				ball.vx = -ball.vx // Invert ball velocity
-			}
-			if (ball.y + ball.vy > canvas_height || ball.y + ball.vy < 0) {
-				ball.vy = -ball.vy // Invert ball velocity
-			}
-			if (ball.y + ball.vy < ship.y + ship.height && (ship.x <= ball.x && ball.x <= ship.x + ship.width)) {
-				console.log('Ball and Ship collision detected')
-				ball.vy = -ball.vy
-			}
-			ball.x += ball.vx;
-			ball.y += ball.vy;
-
-			// ### Ship ###
-			ship.draw()
-
-			if (ship.x + ship.vx < 0 || ship.x + ship.width + ship.vx > canvas_width) {
-				console.log('Border collision detected')
-				ship.vx = -ship.vx
-			}
-			ship.x += ship.vx
+			ship.x = ship_x * canvas.width - 80
+            ship.y = ship_y * canvas.height
 
 			// Request next frame
 			raf = window.requestAnimationFrame(draw);
@@ -89,9 +163,9 @@ const Canvas = () => {
 	},[])
 
     return (
-        <canvas id='canvas' width={canvas_width} height={canvas_height}>
-            use a different browser
-        </canvas>
+        <>
+            <button onClick={() => {video = null}}>hi</button>
+        </>
     )
 }
 

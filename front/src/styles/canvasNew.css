@@ -1,0 +1,13 @@
+#webcam-container {
+    position: relative
+}
+
+#webcam {
+    position: absolute
+}
+
+#output_canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
