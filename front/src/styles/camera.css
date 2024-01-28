@@ -1,0 +1,8 @@
+#camera-container {
+    position: absolute;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+

@@ -1,14 +1,15 @@
-import React from "react"
+import React from 'react'
 import Webcam from 'react-webcam'
-import { useEffect } from "react";
+import { useEffect } from 'react'
+import '../styles/camera.css'
 
 const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "user"
+    facingMode: 'user'
   };
   
-const Camera = ({ ready, sendMessage }) => {
+const Camera = ({ sendMessage }) => {
     const webcamRef = React.useRef(null)
 
     const capture = React.useCallback(
@@ -20,21 +21,23 @@ const Camera = ({ ready, sendMessage }) => {
     )
 
     useEffect(() => {
-        const interval = setInterval(() => capture(), 1000 / 30);
+        const interval = setInterval(() => capture(), 1000 / 20);
 
         return () => clearInterval(interval)
     }, [])
 
 
     return (
-        <Webcam
-            audio={false}
-            height={720}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            width={1280}
-            videoConstraints={videoConstraints}
-        />
+        <div id='camera-container'>
+            <Webcam
+                audio={false}
+                height={720}
+                ref={webcamRef}
+                screenshotFormat='image/jpeg'
+                width={1280}
+                videoConstraints={videoConstraints}
+            />
+        </div>
     )
 }
 
