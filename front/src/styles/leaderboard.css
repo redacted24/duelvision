@@ -1,0 +1,11 @@
+#page-title {
+    font-family: 'retro';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 50px;
+    font-size: var(--font-size-big)
+
+    
+}

@@ -1,8 +1,10 @@
+import '../styles/statistics.css'
+
 const Statistics = () => {
     return (
         <div>
-            hello
-
+            <div>Statistics</div>
+            <div>a person</div>
         </div>
     )
 }
