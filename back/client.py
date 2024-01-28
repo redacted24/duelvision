@@ -7,7 +7,7 @@ import json
 
 
 async def sender():
-    url = "ws://127.0.0.1:8001"
+    url = "ws://34.125.205.166:80"
     connection = False
     async with websockets.connect(url) as w:
         try:
