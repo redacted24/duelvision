@@ -32,3 +32,17 @@ body {
 .normal-font {
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
 }
+
+#webcam-container {
+    position: relative
+}
+
+#webcam {
+    position: absolute
+}
+
+#output_canvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}

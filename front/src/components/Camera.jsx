@@ -21,7 +21,7 @@ const Camera = ({ sendMessage }) => {
     )
 
     useEffect(() => {
-        const interval = setInterval(() => capture(), 1000 / 20);
+        const interval = setInterval(() => capture(), 1000 / 30);
 
         return () => clearInterval(interval)
     }, [])
