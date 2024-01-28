@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import './styles/index.css'
 import Camera from './components/Camera'
 import Login from './components/Login'
@@ -28,12 +29,13 @@ const App = () => {
 		return <Login setUsername={setUsername} />
 	} else {
 		return (
-      <>
-        <div>
-          <Camera sendMessage={sendMessage}/>
-          <Canvas />
-        </div>
-      </>
+      	<Router>
+        	<div>
+				<Header></Header>
+          		<Camera sendMessage={sendMessage}/>
+          		<Canvas />
+        	</div>
+		</Router>
 
 		)}
 	}	
