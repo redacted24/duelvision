@@ -12,7 +12,8 @@ const Login = ({ setUsername }) => {
 
     const login = (e) => {
         e.preventDefault()
-        setUsername(tempUser && `Anonymous ${Math.floor(Math.random * 100000)}`)
+        setUsername(tempUser)
+        // setUsername(tempUser && `Anonymous ${Math.floor(Math.random * 100000)}`)
         console.log('Username set, logged in')
         setTempUser('')
     }
