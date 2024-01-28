@@ -2,11 +2,8 @@ import '../styles/leaderboard.css'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Leaderboard = ({ username }) => {
+const Leaderboard = ({ username, win, loss, lossRatio }) => {
 
-	const [win, setWin] = useState(0)
-	const [loss, setLoss] = useState(0)
-	const [lossRatio, setLossRatio] = useState(0)
 
     return (
         <div>

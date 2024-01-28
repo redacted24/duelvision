@@ -1,6 +1,6 @@
 import '../styles/statistics.css'
 
-const Statistics = ({ username }) => {
+const Statistics = ({ win, loss, lossRatio, username }) => {
     return (
         <div>
             <div id='page-title2'>Statistics</div>
@@ -11,13 +11,24 @@ const Statistics = ({ username }) => {
                 <div id='nameInfo'>
                     <div className='userName'>{username}</div>
                     <div className='statuses'>Furious player</div>
-                    <div className='statuses'>Location</div>
-                    <div className='statuses'>Medals</div>
+                    <div className='statuses'>Location: Montreal</div>
+                    <div className='statuses'>Medals: 69</div>
                 </div>
                 <div id='trophy'>
-                    <div>trophy wins</div>
-                    <div>losses icon</div>
-                    <div>win-loss ration</div>
+                    <div className='stat-container'>
+                        <img className='statistics-icons' src='../src/assets/trophy.svg'/>
+                        <div className='statName'>Wins: {win}</div>
+                    </div>
+                    <div className='stat-container'>
+                        <img className='statistics-icons' src='../src/assets/loss.svg'/>
+                        <div className='stat-container'>Losses: {loss}</div>
+                    </div>
+                    <div className='stat-container'>
+                        <img className='statistics-icons' src='../src/assets/loss.svg'/>
+                        <div className='stat-container'>
+                            Win-Loss Ratio: {lossRatio}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

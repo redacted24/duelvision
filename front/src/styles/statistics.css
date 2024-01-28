@@ -15,9 +15,6 @@
 
     color: #BAB8DF;
 }
-div {
-    border: solid red;
-}
 
 #pfp-container {
     width: 20%;
@@ -31,6 +28,14 @@ div {
 
     color: #BAB8DF;
     text-shadow: #444268;
+
+    background-color: #1E1D2D;
+    padding: 50px;
+    box-shadow: 5px 5px 0 #32304a;
+}
+
+div {
+    border: 3px solid red;
 }
 
 #trophy {
@@ -38,9 +43,23 @@ div {
 }
 
 #nameInfo {
+    padding-left: 40px;
     width: 60%;
 }
 
 .userName {
+    font-size: var(--font-size-big);
+}
+.statuses {
+    margin-top: 5px;    
+}
 
+.statistics-icons {
+    height: 50px;
+}
+
+.stat-container {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
 }
