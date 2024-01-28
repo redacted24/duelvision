@@ -1,10 +1,14 @@
-#webcam-container {
-    display: flex;
-    height: 500px;
-    justify-content: center;
-    border: 5px red solid;
+@font-face {
+    font-family: "retro";
+    src: url("../assets/retro.ttf")
 }
 
-#canvas {
-    border: 3px solid black;
-}   
+body {
+    --font-size-mid: 20px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1b1b1b;
+}

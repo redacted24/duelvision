@@ -1,9 +1,12 @@
 import '../styles/index.css'
+import '../styles/login.css'
 
 const Header = () => {
     return (
-        <div>
-            brub
+        <div id="navbar">
+            <div id="home">
+                Home
+            </div>
         </div>
     )
 }

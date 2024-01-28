@@ -4,6 +4,7 @@
 *main style*
 background: #22242B;
 color: 747D99;
+background: #1b1b1b;
 
 ## Red scheme
 *main style*
@@ -39,3 +40,10 @@ color: #7FA4F0;
 
 *shadows*
 background: #141C2D;
+
+# font sizes
+
+big: 38;
+mid: 21;
+normal: 16;
+small: 12;

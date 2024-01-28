@@ -1,0 +1,12 @@
+#navbar {
+    background-color: #22242B;
+    height: 50px;
+    border-bottom: 3px solid #747D99;
+}
+
+#home {
+    padding: 10px 0 0 10px;
+    font-family: "retro";
+    color: #747D99;
+    font-size: var(--font-size-mid);
+}
