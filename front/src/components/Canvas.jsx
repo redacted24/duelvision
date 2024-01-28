@@ -37,7 +37,7 @@ const Canvas = () => {
     }, [])
   
     useEffect(() => {
-        const url = 'ws://192.168.173.38:8001'
+        const url = 'ws://34.125.205.166:80'
         socket = new WebSocket(url)
 
 		const video = document.getElementById("webcam")
