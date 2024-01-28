@@ -11,6 +11,8 @@ npm i react-webcam
 npm i react-router-dom
 ```
 
+# Lobby page inspired by tetr.io
+
 # Run
 
 ```

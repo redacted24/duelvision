@@ -11,7 +11,6 @@ const videoConstraints = {
   };
   
 const Camera = ({ sendMessage }) => {
-
     const webcamRef = React.useRef(null)
 
     const capture = React.useCallback(
