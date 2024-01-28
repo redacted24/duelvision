@@ -1,0 +1,68 @@
+#page-title {
+    font-family: 'retro';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: var(--font-size-big);
+    text-shadow: 5px 5px 0px #2b5e41;
+
+    color: #88FF99;
+}
+
+#linkers {
+    text-decoration: none;
+}
+
+.lead-container {
+    display: flex;
+    justify-content: space-between;
+
+    background-color: #1C3E2A;
+    margin: 0 100px 0 100px;
+    box-shadow: 5px 5px 0 #2b5e41;
+
+    transition: all 0.25s;
+}
+
+.lead-container:hover {
+    transform: scale(1.05)
+}
+
+.lead-container:active {
+    transform: scale(1)
+}
+
+.greenColor {
+    color: #88FF99;
+}
+
+.leaderNumber {
+    display: flex;
+    justify-content: center;
+    font-family: 'retro';
+    font-size: var(--font-size-big);
+    background-color: #183625;
+    width: 10%;
+}
+
+.leaderName {
+    display: flex;
+    margin-left: 60px;
+    align-items: center;
+    justify-content: left;
+    width: 40%;
+    font-family: 'retro';
+    font-size: 30px;
+}
+
+.leaderStats {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 50%;
+    font-family: 'retro';
+
+}
