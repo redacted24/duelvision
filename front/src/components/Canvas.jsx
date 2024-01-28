@@ -53,10 +53,10 @@ const Canvas = () => {
             canvasElement.width = video.videoWidth
             canvasElement.height = video.videoHeight
 
-            if (runningMode === null) {
-                runningMode = "VIDEO";
-                await gestureRecognizer.setOptions({ runningMode: "VIDEO "})
-            }
+        if (runningMode === null) {
+            runningMode = "VIDEO";
+            await gestureRecognizer.setOptions({ runningMode: "VIDEO "})
+        }
 
             let startTimeMs = performance.now();
             if (lastVideoTime !== video.currentTime) {

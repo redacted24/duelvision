@@ -50,6 +50,7 @@ hovered:
     color: #7FA4F0
 
 # font sizes
+font: 'retro'
 
 big: 38;
 mid: 21;
