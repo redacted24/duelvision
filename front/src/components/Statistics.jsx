@@ -1,18 +1,18 @@
 import '../styles/statistics.css'
 
-const Statistics = () => {
+const Statistics = ({ username }) => {
     return (
         <div>
             <div id='page-title2'>Statistics</div>
-            <div id='main-container'>
-                <div>
+            <div id='maine-container'>
+                <div id='pfp-container'>
                     <img id='pfp-pfp' src='../src/assets/defaultpfp.png'/>
                 </div>
                 <div id='nameInfo'>
-                    <div>name</div>
-                    <div>Furious player</div>
-                    <div>Location</div>
-                    <div>Medals</div>
+                    <div className='userName'>{username}</div>
+                    <div className='statuses'>Furious player</div>
+                    <div className='statuses'>Location</div>
+                    <div className='statuses'>Medals</div>
                 </div>
                 <div id='trophy'>
                     <div>trophy wins</div>

@@ -18,7 +18,7 @@ const App = () => {
                 <Route path = "/" element = {(!username) ? (<Login setUsername={setUsername}/>) : (<Lobby/>)}/>
                 <Route path = "/gamepage" element = {<GamePage/>}/>
                 <Route path = "/leaderboard" element = {<Leaderboard username = {username}/>}/>
-                <Route path = "/statistics" element = {<Statistics />}/>
+                <Route path = "/statistics" element = {<Statistics username = {username}/>}/>
             </Routes>
         </Router>
 )}	

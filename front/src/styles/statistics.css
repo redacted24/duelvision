@@ -1,5 +1,5 @@
 #pfp-pfp {
-    height: 200px;
+    width: 100%;
 }
 
 #page-title2 {
@@ -19,10 +19,28 @@ div {
     border: solid red;
 }
 
-#main-container {
+#pfp-container {
+    width: 20%;
+}
+
+#maine-container {
     display: flex;
+    justify-content: space-between;
     margin: 0 60px 0 60px;
     font-family: 'retro';
 
-    color: 
+    color: #BAB8DF;
+    text-shadow: #444268;
+}
+
+#trophy {
+    width: 20%;
+}
+
+#nameInfo {
+    width: 60%;
+}
+
+.userName {
+
 }
