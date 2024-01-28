@@ -183,10 +183,10 @@ const Canvas = () => {
             vy: 0,
             color: 'black',
             draw() {
-                const img = new Image();
+                let img = new Image();
                 img.onload = () => {
                     ctx.drawImage(img, 0, 0);
-                };
+                }
                 img.src = "../assets/spaceship.svg";
                 ctx.beginPath()
                 ctx.strokeStyle = this.color
