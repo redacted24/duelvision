@@ -4,6 +4,7 @@ mchacks2024 project made by: redacted24, sivabalansm, Crazydodo123, CyFung721
 # Dependencies & Libraries
 - React Webcam
 - React Router Dom
+- Mediapipe
 
 ```
 npm i
@@ -11,10 +12,10 @@ npm i react-webcam
 npm i react-router-dom
 ```
 
-# Lobby page inspired by tetr.io
-
 # Run
 
 ```
 npm run dev
 ```
+
+### Lobby page inspired by tetr.io
