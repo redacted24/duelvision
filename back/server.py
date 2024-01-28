@@ -40,29 +40,34 @@ if kill is sent from client or pinging client periodically does not work, then p
 
 """
 
-status_wait = { "x": 0, "status_wait": True }
-status_ready = { "x": 0, "status_wait": False }
+status_wait = { "x": -1, "status_wait": True }
+status_ready = { "x": -1, "status_wait": False }
 
 
 clients = []
 
 async def initiate(websocket):
-    global clients
-    if len(clients) <= 2 and websocket not in clients:
-        # server hello
-        await websocket.send("hello")
+    try:
+        global clients
+        if len(clients) <= 2 and websocket not in clients:
+            # server hello
+            await websocket.send("hello")
 
-        response = await websocket.recv()
+            response = await websocket.recv()
 
-        if response == "hello":
-            clients.append(websocket)
+            if response == "hello":
+                clients.append(websocket)
 
-            if len(clients) == 2:
-                await clients[0].send(json.dumps(status_ready))
-                await clients[1].send(json.dumps(status_ready))
+                if len(clients) == 2:
 
-            else:
-                await websocket.send(json.dumps(status_wait))
+                    await clients[0].send(json.dumps(status_ready))
+                    await clients[1].send(json.dumps(status_ready))
+
+                else:
+                    await websocket.send(json.dumps(status_wait))
+    except Exception as e:
+        print(e)
+
 
 async def handler(websocket):
     global clients
@@ -76,26 +81,51 @@ async def handler(websocket):
 
 
     #client_id = clients.index(websocket)
-    while True:
+    while websocket in clients:
         try:
             msg = await websocket.recv()
 
             client_idx = clients.index(websocket)
             
+            print("Clident id:", client_idx,"MSG:", msg)
             await clients[client_idx - 1].send(msg)
-
-
 
 
             #print(dir(websocket))
             #await websocket.send(f"[{time.time()}] ID: {client_id} You said: {msg}")
+        except Exception as e:
+            print(e)
+            if len(clients) > 1:
+                client_idx = clients.index(websocket)
+                await clients[client_idx - 1].send(json.dumps(status_wait))
+                #clients.remove(websocket)
+                #for client in clients:
+                #    clients.pop()
+                #clients.remove(websocket)
+            clients.remove(websocket)
+            await websocket.close()
+            break
 
+'''
         except websockets.exceptions.ConnectionClosed as e:
             print(e)
-            client_idx = clients.index(websocket)
-            await clients[client_idx - 1].send(json.dumps(status_wait))
-            clients.remove(websocket)
+            if len(clients) > 1:
+                client_idx = clients.index(websocket)
+                await clients[client_idx - 1].send(json.dumps(status_wait))
+                #for client in clients:
+                #    clients.pop()
+                #clients.remove(websocket)
+            await websocket.close()
             break
+        except websockets.ConnectionClosedOK as e:
+            print(e)
+            if len(clients) > 1:
+                client_idx = clients.index(websocket)
+                await clients[client_idx - 1].send(json.dumps(status_wait))
+            await websocket.close()
+            break
+  '''      
+
 
         #except Exception as e:
         #    print("WEBSOCKET ERROR:", e)

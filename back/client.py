@@ -10,29 +10,36 @@ async def sender():
     url = "ws://127.0.0.1:8001"
     connection = False
     async with websockets.connect(url) as w:
-        while True:
-            msg = await w.recv()
-            print(msg)
-            if not connection:
+        try:
+            while True:
+                msg = await w.recv()
+                print(msg)
+                if not connection:
+                    if msg == "hello":
+                        await w.send("hello")
+                        connection = True
+                        continue
+
                 if msg == "hello":
-                    await w.send("hello")
-                    connection = True
+                    print("hello again")
+                    continue
+                blob_dict = json.loads(msg)
+
+                if blob_dict["status_wait"] == True:
                     continue
 
-            if msg == "hello":
-                print("hello again")
-                continue
-            blob_dict = json.loads(msg)
+                blob_dict["x"] = "bob"
+                await w.send(json.dumps(blob_dict))
 
-            if blob_dict["status_wait"] == True:
-                continue
+        except websockets.exceptions.ConnectionClosedOK:
+            await sender()
 
-            blob_dict["x"] = "bob"
-            await w.send(json.dumps(blob_dict))
+        except KeyboardInterrupt:
+            #await w.close()
+            print("bye")
 
             
 
 
-            print(msg)
 
 asyncio.run(sender())
