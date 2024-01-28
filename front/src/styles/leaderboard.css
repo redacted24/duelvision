@@ -12,6 +12,10 @@
     color: #88FF99;
 }
 
+#linkers {
+    text-decoration: none;
+}
+
 .lead-container {
     display: flex;
     justify-content: space-between;
@@ -19,7 +23,18 @@
     background-color: #1C3E2A;
     margin: 0 100px 0 100px;
     box-shadow: 5px 5px 0 #2b5e41;
+
+    transition: all 0.25s;
 }
+
+.lead-container:hover {
+    transform: scale(1.05)
+}
+
+.lead-container:active {
+    transform: scale(1)
+}
+
 .greenColor {
     color: #88FF99;
 }
