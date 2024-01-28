@@ -21,11 +21,11 @@ const Statistics = ({ win, loss, lossRatio, username }) => {
                     </div>
                     <div className='stat-container'>
                         <img className='statistics-icons' src='../src/assets/loss.svg'/>
-                        <div className='stat-container'>Losses: {loss}</div>
+                        <div className='statName'>Losses: {loss}</div>
                     </div>
                     <div className='stat-container'>
                         <img className='statistics-icons' src='../src/assets/loss.svg'/>
-                        <div className='stat-container'>
+                        <div className='statName'>
                             Win-Loss Ratio: {lossRatio}
                         </div>
                     </div>
