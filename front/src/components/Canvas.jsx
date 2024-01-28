@@ -131,7 +131,6 @@ const Canvas = () => {
                         enableCam()
                         raf = window.requestAnimationFrame(draw)
                     }, 1000);
-                    enableCam()
                 }
                 if (message.x >= 0) {
                     balls = balls.concat({
