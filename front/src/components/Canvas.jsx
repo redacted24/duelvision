@@ -19,6 +19,7 @@ const Canvas = () => {
     let primed_timeout_id = null
     let shot_timeout_id = null
     let balls = []
+    let game_start = false
     let game_end = false
 
     useEffect(() => {
@@ -129,8 +130,11 @@ const Canvas = () => {
                 if (message.status_wait === false) {
                     setTimeout(() => {
                         enableCam()
+                        document.getElementById("waiting-page").style.display = "none"
                         raf = window.requestAnimationFrame(draw)
-                    }, 1000);
+                        game_start = true
+                    }, 500);
+
                 }
                 if (message.x >= 0) {
                     balls = balls.concat({
@@ -258,8 +262,16 @@ const Canvas = () => {
             return () => socket.close()
     }, [])
 
+    console.log(game_start)
+
     return (
         <div>
+            {game_start ||
+                <div id='waiting-page'>
+                    <p id='waiting'>Waiting for players</p>
+                    <p id='eta'>ETA: 0:05</p>
+                </div>
+            }
             <div id="liveView" className="videoView">
                 <div id="webcam-container">
                     <video id="webcam" autoPlay playsInline></video>

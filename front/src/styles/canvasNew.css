@@ -1,3 +1,19 @@
+#waiting-page {
+    margin-top: 30vh;
+    width: 100%;
+    color: white;
+    text-align: center;
+    font-family: 'retro';
+}
+
+#waiting {
+    font-size: 5rem;
+}
+
+#eta {
+    font-size: 2rem;
+}
+
 #webcam-container {
     position: relative
 }
