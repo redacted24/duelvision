@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
+    let raf
     let socket = undefined
     let gestureRecognizer = undefined
     let runningMode = null
@@ -18,33 +19,18 @@ const Canvas = () => {
     let balls = []
     let handLandmarker = undefined
 
-    useEffect(() => {
-        const url = 'ws://192.168.173.38:8001'
-        socket = new WebSocket(url)
-        
-        socket.onmessage = function(event) {
-            let incomingMessage = event.data
-    
-            if (incomingMessage === 'hello') {
-                socket.send('hello')
-            } else {
-                console.log(incomingMessage)
-            }
-        }
-    
-        socket.onclose = event => console.log(`Closed ${event.code}`)
-
-        return () => socket.close()
-    }, [])
-
     if (socket) {
         socket.onmessage = function(event) {
             let incomingMessage = event.data
     
+            console.log(incomingMessage)
             if (incomingMessage === 'hello') {
                 socket.send('hello')
             } else {
-                console.log(incomingMessage)
+                const message = JSON.parse(incomingMessage)
+                console.log(message)
+                if (!message.status_wait) {
+                } 
             }
         }
     
@@ -67,6 +53,9 @@ const Canvas = () => {
     }, [])
   
     useEffect(() => {
+        const url = 'ws://192.168.173.38:8001'
+        socket = new WebSocket(url)
+
 		const video = document.getElementById("webcam")
     	const canvasElement = document.getElementById("output_canvas")
         
@@ -160,18 +149,56 @@ const Canvas = () => {
                 video.addEventListener("loadeddata", predictWebcam);
             });
         }
-        const enableWebcamButton = document.getElementById("webcamButton");
+
+        socket.onmessage = function(event) {
+            let incomingMessage = event.data
+    
+            if (incomingMessage === 'hello') {
+                socket.send('hello')
+            } else {
+                const message = JSON.parse(incomingMessage)
+                if (message.status_wait === false) {
+                    setTimeout(() => {
+                        enableCam()
+                        raf = window.requestAnimationFrame(draw)
+                    }, 1000);
+                    enableCam()
+                }
+                if (message.x >= 0) {
+                    balls = balls.concat({
+                        x: message.x,
+                        y: 10,
+                        vx: 0,
+                        vy: 10,
+                        radius: 25,
+                        color: 'red',
+                        enemy: true,
+                        draw() {
+                            ctx.beginPath()
+                            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true) // Draws circle
+                            ctx.closePath()
+                            ctx.fillStyle = this.color
+                            ctx.fill()
+                        }
+                    })
+                }
+                console.log(incomingMessage)
+            }
+        }
+    
+        socket.onclose = event => console.log(`Closed ${event.code}`)
+
+        const enableWebcamButton = document.getElementById("webcamButton")
         enableWebcamButton.addEventListener("click", enableCam);
 
         // ## ACTUAL DRAWING PART ##
         const canvas = document.getElementById("output_canvas")
         const ctx = canvas.getContext("2d");
-        let raf
 
         // Spaceship object
         const ship = {
-            x: 100,
-            y: 20,
+            x: null,
+            y: null,
             width: 150,
             height: 50,
             leftBorder: 0,
@@ -215,9 +242,21 @@ const Canvas = () => {
                 ball.draw()
                 ball.x += ball.vx
                 ball.y += ball.vy
+                if (ball.y < 0) {
+                    const message = {x: ball.x}
+                    socket.send(JSON.stringify(message))
+                }
+
+                if (ball.enemy) {
+                    console.log('enemy detected')
+                    if (ball.x >= ship.x && ball.x <= ship.x + 150 && ball.y >= ship.y && ball.y <= ship.y + 50) {
+                        alert('hit')
+                    }
+                }
+
             })
             
-            balls = balls.filter(ball => ball.y >= 0)
+            balls = balls.filter(ball => ball.y >= 0 && ball.y <= canvas.height)
 
 
             if (ship.x) ship.draw()
@@ -234,12 +273,10 @@ const Canvas = () => {
 		
 			// Activate drawing on mouse over
 			canvas.addEventListener('mouseover', (e) => {
-				raf = window.requestAnimationFrame(draw);
+				raf = window.requestAnimationFrame(draw)
             })
 
-			canvas.addEventListener('mouseout', (e) => {
-				window.cancelAnimationFrame(raf);
-			})
+            return () => socket.close()
     }, [])
 
     return (
