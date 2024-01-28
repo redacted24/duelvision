@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
-    const circRad = Math.PI * 2
+    let socket = undefined
     let gestureRecognizer = undefined
     let runningMode = null
     let webcamRunning = false
@@ -15,8 +15,41 @@ const Canvas = () => {
     let shot = false
     let primed_timeout_id = null
     let shot_timeout_id = null
-    let ball = null
+    let balls = []
     let handLandmarker = undefined
+
+    useEffect(() => {
+        const url = 'ws://192.168.173.38:8001'
+        socket = new WebSocket(url)
+        
+        socket.onmessage = function(event) {
+            let incomingMessage = event.data
+    
+            if (incomingMessage === 'hello') {
+                socket.send('hello')
+            } else {
+                console.log(incomingMessage)
+            }
+        }
+    
+        socket.onclose = event => console.log(`Closed ${event.code}`)
+
+        return () => socket.close()
+    }, [])
+
+    if (socket) {
+        socket.onmessage = function(event) {
+            let incomingMessage = event.data
+    
+            if (incomingMessage === 'hello') {
+                socket.send('hello')
+            } else {
+                console.log(incomingMessage)
+            }
+        }
+    
+        socket.onclose = event => console.log(`Closed ${event.code}`)
+    }
 
     useEffect(() => {
         const init = async () => {
@@ -36,7 +69,7 @@ const Canvas = () => {
     useEffect(() => {
 		const video = document.getElementById("webcam")
     	const canvasElement = document.getElementById("output_canvas")
-        const canvasCtx = canvasElement.getContext("2d")
+        
         const createHandLandmarker = async () => {
             const vision = await FilesetResolver.forVisionTasks(
             "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
@@ -52,7 +85,6 @@ const Canvas = () => {
   
         let lastVideoTime = -1
         let gestureResults = undefined
-        console.log(video)
 
         // PredictWebcam
         async function predictWebcam() {
@@ -161,8 +193,8 @@ const Canvas = () => {
                 clearTimeout(shot_timeout_id)
                 shot_timeout_id = setTimeout(() => {
                         shot = false
-                }, 500)
-                ball = {
+                }, 400)
+                balls = balls.concat({
                     x: ship_x * canvas.width,
                     y: ship_y * canvas.height - 50,
                     vx: 0,
@@ -176,14 +208,17 @@ const Canvas = () => {
                         ctx.fillStyle = this.color
                         ctx.fill()
                     }
-                }
+                })
             }
 
-            if (ball) {
-                    ball.draw()
-                    ball.x += ball.vx
-                    ball.y += ball.vy
-            }
+            balls.forEach(ball => {
+                ball.draw()
+                ball.x += ball.vx
+                ball.y += ball.vy
+            })
+            
+            balls = balls.filter(ball => ball.y >= 0)
+
 
             if (ship.x) ship.draw()
 
@@ -200,11 +235,11 @@ const Canvas = () => {
 			// Activate drawing on mouse over
 			canvas.addEventListener('mouseover', (e) => {
 				raf = window.requestAnimationFrame(draw);
-				});
+            })
 
 			canvas.addEventListener('mouseout', (e) => {
 				window.cancelAnimationFrame(raf);
-			});
+			})
     }, [])
 
     return (
