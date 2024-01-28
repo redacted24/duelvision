@@ -11,11 +11,10 @@ import { HandLandmarker, FilesetResolver } from '@mediapipe/tasks-vision'
 
 const App = () => {
   const [username, setUsername] = useState(null)
-  
 
 	return (
 	<Router>
-		<Header />
+		<Header username = {username}/>
 		<Routes>
 			<Route path = "/" element = {(!username) ? (<Login setUsername={setUsername}/>) : (<Lobby/>)}/>
 			<Route path = "/gamepage" element = {<GamePage/>}/>
@@ -23,7 +22,6 @@ const App = () => {
 			<Route path = "/statistics" element = {<Statistics />}/>
 		</Routes>
 	</Router>
-
-	)}	
+)}	
 	
 export default App
