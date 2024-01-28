@@ -10,6 +10,8 @@ const videoConstraints = {
   };
   
 const Camera = () => {
+    let url = 'ws://192.168.173.38:8001'
+	let socket = new WebSocket(url);
     const webcamRef = React.useRef(null)
     const sendMessage = (message) => {
         if (socket.readyState) socket.send(message)
@@ -37,14 +39,14 @@ const Camera = () => {
 
     return (
         <div id='camera-container'>
-            <Webcam
+            {/* <Webcam
                 audio={false}
                 height={720}
                 ref={webcamRef}
                 screenshotFormat='image/jpeg'
                 width={1280}
                 videoConstraints={videoConstraints}
-            />
+            /> */}
         </div>
     )
 }
