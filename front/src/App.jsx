@@ -14,6 +14,9 @@ const App = () => {
   let handLandmarker = undefined
   let runningMode = "IMAGE"
   let webcamRunning = false
+  
+  const [username, setUsername] = useState(null)
+  console.log(`Username: ${username}`)
 
   useEffect(() => {
     const createHandLandmarker = async () => {
@@ -66,14 +69,14 @@ const App = () => {
   let lastVideoTime = -1;
   let results = undefined;
   console.log(video);
+
   async function predictWebcam() {
     canvasElement.style.width = video.videoWidth;;
     canvasElement.style.height = video.videoHeight;
     canvasElement.width = video.videoWidth;
     canvasElement.height = video.videoHeight;
     
-	const [username, setUsername] = useState(null)
-	console.log(`Username: ${username}`)
+
 
     if (runningMode === "IMAGE") {
 		runningMode = "VIDEO";
