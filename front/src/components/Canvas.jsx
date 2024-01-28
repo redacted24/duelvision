@@ -96,8 +96,13 @@ const Canvas = () => {
 
                 ship_x = sum_x / landmarks.length
                 ship_y = sum_y / landmarks.length
+                console.log(ship_x, ship_y)
             }
-            currentGesture = gestureResults.gestures[0][0].categoryName
+
+
+            console.log(gestureResults.gestures)
+
+            if (gestureResults.gestures.length !== 0) currentGesture = gestureResults.gestures[0][0].categoryName
             
             if (currentGesture == 'Closed_Fist') {
                 primed = true
