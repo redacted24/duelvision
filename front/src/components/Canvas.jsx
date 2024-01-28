@@ -1,9 +1,11 @@
 import { HandLandmarker, FilesetResolver, GestureRecognizer } from '@mediapipe/tasks-vision'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import '../styles/canvasNew.css'
 
 const Canvas = () => {
+    const navigate = useNavigate()
     let raf
     let socket = undefined
     let gestureRecognizer = undefined
@@ -17,25 +19,7 @@ const Canvas = () => {
     let primed_timeout_id = null
     let shot_timeout_id = null
     let balls = []
-    let handLandmarker = undefined
-
-    if (socket) {
-        socket.onmessage = function(event) {
-            let incomingMessage = event.data
-    
-            console.log(incomingMessage)
-            if (incomingMessage === 'hello') {
-                socket.send('hello')
-            } else {
-                const message = JSON.parse(incomingMessage)
-                console.log(message)
-                if (!message.status_wait) {
-                } 
-            }
-        }
-    
-        socket.onclose = event => console.log(`Closed ${event.code}`)
-    }
+    let game_end = false
 
     useEffect(() => {
         const init = async () => {
@@ -58,19 +42,6 @@ const Canvas = () => {
 
 		const video = document.getElementById("webcam")
     	const canvasElement = document.getElementById("output_canvas")
-        
-        const createHandLandmarker = async () => {
-            const vision = await FilesetResolver.forVisionTasks(
-            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
-            )
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: {
-                modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-            },
-            numHands: 2
-            })
-        }
-        createHandLandmarker()
   
         let lastVideoTime = -1
         let gestureResults = undefined
@@ -127,7 +98,7 @@ const Canvas = () => {
 
         // Enablecam
         const enableCam = (event) => {
-            if (!handLandmarker) {
+            if (!gestureRecognizer) {
                 console.log("Wait! objectDetector not loaded yet.");
                 return;
             }
@@ -181,8 +152,14 @@ const Canvas = () => {
                             ctx.fill()
                         }
                     })
+                
                 }
-                console.log(incomingMessage)
+
+                if (!game_end && message.hit) {
+                    alert('You won!!!')
+                    navigate('/')
+                }
+            console.log(incomingMessage)
             }
         }
     
@@ -205,16 +182,18 @@ const Canvas = () => {
             rightBorder: 0,
             vx: 5,
             vy: 0,
-            color: 'red',
+            color: 'black',
             draw() {
                 ctx.beginPath()
+                ctx.fillStyle = this.color
                 ctx.fillRect(this.x, this.y, this.width, this.height)
-                }
+                ctx.restore()
+            }
         }
 
         // Draw a single frame.
         const draw = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
             if (!shot && primed && currentGesture == 'Open_Palm') {
                 shot = true
                 clearTimeout(shot_timeout_id)
@@ -225,7 +204,7 @@ const Canvas = () => {
                     x: ship_x * canvas.width,
                     y: ship_y * canvas.height - 50,
                     vx: 0,
-                    vy: -30,
+                    vy: -20,
                     radius: 25,
                     color: 'blue',
                     draw() {
@@ -249,17 +228,21 @@ const Canvas = () => {
 
                 if (ball.enemy) {
                     console.log('enemy detected')
-                    if (ball.x >= ship.x && ball.x <= ship.x + 150 && ball.y >= ship.y && ball.y <= ship.y + 50) {
-                        alert('hit')
+                    if (!game_end && ball.x >= ship.x && ball.x <= ship.x + 150 && ball.y >= ship.y && ball.y <= ship.y + 50) {
+                        socket.send(JSON.stringify({hit: true}))
+                        alert('You lost! :(')
+                        navigate('/')
                     }
                 }
-
+                ctx.restore()
             })
             
             balls = balls.filter(ball => ball.y >= 0 && ball.y <= canvas.height)
 
 
             if (ship.x) ship.draw()
+
+            ctx.restore()
 
             prev_x = ship.x
             prev_y = ship.y
