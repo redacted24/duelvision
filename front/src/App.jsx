@@ -22,7 +22,7 @@ const App = () => {
 	socket.onclose = event => console.log(`Closed ${event.code}`)
 
 	const [username, setUsername] = useState(null)
-
+	console.log(`Username: ${username}`)
 
 	if (!username) {
 		return <Login setUsername={setUsername} />

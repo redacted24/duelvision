@@ -1,5 +1,5 @@
 import '../styles/index.css'
-import '../styles/login.css'
+import '../styles/header.css'
 
 const Header = () => {
     return (
