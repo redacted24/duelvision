@@ -55,7 +55,13 @@
 #submit:hover {
     cursor: pointer;
     opacity: 0.8;
+    box-shadow: 0 0 3px #7FA4F0;
+    background-color: #1E1D2D;
+    color: #7FA4F0;
+}
 
+#submit:active {
+    transform: scale(0.95,0.95)
 }
 
 .login-text {

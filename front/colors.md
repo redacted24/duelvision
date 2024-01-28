@@ -41,6 +41,12 @@ color: #7FA4F0;
 *shadows*
 background: #141C2D;
 
+# button 
+normal: darkgrey
+hovered:
+    bg: #1E1D2D
+    color: #7FA4F0
+
 # font sizes
 
 big: 38;
