@@ -9,9 +9,17 @@ const videoConstraints = {
     facingMode: 'user'
   };
   
-const Camera = ({ sendMessage }) => {
+const Camera = () => {
     const webcamRef = React.useRef(null)
+    const sendMessage = (message) => {
+        if (socket.readyState) socket.send(message)
+    };
 
+    socket.onmessage = (event) => {
+        let incomingMessage = event.data;
+
+        console.log(incomingMessage)
+    };
     const capture = React.useCallback(
         () => {
             const imageSrc = webcamRef.current.getScreenshot()
