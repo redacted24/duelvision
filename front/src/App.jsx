@@ -4,8 +4,6 @@ import Camera from './components/Camera'
 import Login from './components/Login'
 import Canvas from './components/Canvas'
 
-
-
 const App = () => {
 	let url = 'ws://192.168.173.38:8001'
 	let socket = new WebSocket(url);

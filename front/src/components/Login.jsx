@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Header from './Header'
 
 const Login = ({ setUsername }) => {
     const [tempUser, setTempUser] = useState('')
@@ -15,6 +16,7 @@ const Login = ({ setUsername }) => {
 
     return (
         <div>
+            <Header/>
             <p>Welcome to Star War! Please select a username before continuing your journey: </p>
             <form onSubmit={login}>
                 <input type='text' value={tempUser} onChange={handleChange}></input>
