@@ -1,0 +1,28 @@
+#pfp-pfp {
+    height: 200px;
+}
+
+#page-title2 {
+    font-family: 'retro';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: var(--font-size-big);
+    text-shadow: 5px 5px 0px #444268;
+
+    color: #BAB8DF;
+}
+div {
+    border: solid red;
+}
+
+#main-container {
+    display: flex;
+    margin: 0 60px 0 60px;
+    font-family: 'retro';
+
+    color: 
+}

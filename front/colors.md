@@ -29,6 +29,7 @@ background: #163021;
 *main style*
 background: #1E1D2D;
 color: #BAB8DF;
+text-shadow: #BAB8DF;
 
 *shadows*
 background: #181724;
