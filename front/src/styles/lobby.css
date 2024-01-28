@@ -1,0 +1,50 @@
+#main-container {
+    color: white;
+    padding-top: 35px;
+    overflow-x: hidden;
+}
+
+/* border-top most light, border-left mid light, border-bottom dark */
+
+#multiplayer {
+    background-color: #34222D;
+    border-top: #724b63 3px solid;
+    border-left: #553749 3px solid;
+    border-bottom: #281a23 3px solid;
+}
+
+#multiplayer:hover {
+    transform: translate(-75px,0)
+}
+
+#statistics {
+    background-color: #1E1D2D;
+    border-top: #48456b 3px solid;
+    border-left: #373552 3px solid;
+    border-bottom: #181824 3px solid;
+}
+
+#statistics:hover {
+    transform: translate(-75px,0)
+}
+
+#leaderboard {
+    background-color: #1C3E2A;
+    border-top: #34724e 3px solid;
+    border-left: #27563a 3px solid;
+    border-bottom: #152e20 3px solid;
+}
+
+#leaderboard:hover {
+    transform: translate(-75px,0)
+}
+
+.options-container {
+    width: 100%;
+    border: 3px solid red;
+    margin-left: 20%;
+    height: 170px;
+    margin-bottom: 25px;
+    transition: all 0.25s;
+    border-radius: 3px;
+}
