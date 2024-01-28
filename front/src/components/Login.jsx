@@ -8,6 +8,7 @@ const Login = ({ setUsername }) => {
 
     const handleChange = (e) => {
         setTempUser(e.target.value)
+        console.log(tempUser)
     }
 
     const login = (e) => {

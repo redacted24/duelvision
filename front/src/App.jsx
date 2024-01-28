@@ -13,7 +13,7 @@ const App = () => {
 
 	return (
         <Router>
-            <Header />
+            <Header username = {username}/>
             <Routes>
                 <Route path = "/" element = {(!username) ? (<Login setUsername={setUsername}/>) : (<Lobby/>)}/>
                 <Route path = "/gamepage" element = {<GamePage/>}/>
