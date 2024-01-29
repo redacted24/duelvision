@@ -1,4 +1,4 @@
-# mchacks2024
+# DuelVision
 mchacks2024 project made by: redacted24, sivabalansm, Crazydodo123, CyFung721
 
 ## Inspiration
